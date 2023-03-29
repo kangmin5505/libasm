@@ -3,12 +3,14 @@ AS=nasm
 ASFLAGS=-fmacho64
 AR=ar
 CC=clang++
-CFLAGS=-std=c++17
+CFLAGS=-std=c++17 -Wall -Wextra -Werror
 TEST=test
 LDDIR=.
 LDFLAGS=-lasm -arch x86_64
 MAIN=main.cpp
 CATCH_SRC=catch2/catch_amalgamated.cpp
+
+INCLUDE_DIR=include/
 
 SOURCES:=$(wildcard src/*.s)
 OBJECTS=$(SOURCES:.s=.o)
@@ -36,8 +38,4 @@ re: fclean all
 
 .PHONY: test
 test: $(NAME)
-	@$(CC) $(CFLAGS) -L$(LDDIR) $(LDFLAGS) -o $(TEST) $(MAIN) $(CATCH_SRC)
-
-.PHONY: debug
-debug: $(NAME)
-	@$(CC) $(CFLAGS) -g -L$(LDDIR) $(LDFLAGS) -o $(TEST) $(MAIN) $(CATCH_SRC)
+	@$(CC) $(CFLAGS) -L$(LDDIR) $(LDFLAGS) -I$(INCLUDE_DIR) -o $(TEST) $(MAIN) $(CATCH_SRC)

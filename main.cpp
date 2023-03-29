@@ -1,13 +1,6 @@
 #include "catch2/catch_amalgamated.hpp"
+#include "main.hpp"
 
-#include <cstring>
-#include <unistd.h>
-#include <fcntl.h>
-extern "C" size_t   ft_strlen(const char*);
-extern "C" char     *ft_strcpy(char*, const char*);
-extern "C" int      ft_strcmp(const char*, const char*);
-extern "C" ssize_t  ft_write(int, const void*, size_t);
-extern "C" ssize_t  ft_read(int, void*, size_t);
 
 TEST_CASE( "[ft_strlen]", "[Mandatory]") {
     REQUIRE( ft_strlen("") == strlen("") );
@@ -31,15 +24,20 @@ TEST_CASE( "[ft_strcmp]", "[Mandatory]") {
     REQUIRE( ft_strcmp("kangkim libasm", "kangkim libasm2") < 0 );
 }
 
+TEST_CASE( "[ft_strdup]", "[Mandatory]") {
+    REQUIRE( ft_strcmp(ft_strdup("Hello world!"), strdup("Hello world!")) == 0 );
+    REQUIRE( ft_strcmp(ft_strdup(""), strdup("")) == 0 );
+}
+
 TEST_CASE( "[ft_write]", "[Mandatory]") {
-    REQUIRE( ft_write(-1, "Hello world\n", strlen("Hello")) == \
-        write(-1, "Hello world\n", strlen("Hello")) );
+    ft_write(-1, "Hello world\n", strlen("Hello"));
+    int ft_errno = errno;
+    write(-1, "Hello world\n", strlen("Hello"));
+    int orig_errno = errno;
+
+    REQUIRE( ft_errno == orig_errno );
     REQUIRE( ft_write(STDOUT_FILENO, "Hello world\n", strlen("Hello world\n")) == \
         write(STDOUT_FILENO, "Hello world\n", strlen("Hello world\n")) );
-    REQUIRE( ft_write(STDOUT_FILENO, "Hello world\n", strlen("Hello")) == \
-        write(STDOUT_FILENO, "Hello world\n", strlen("Hello")) );
-    REQUIRE( ft_write(STDOUT_FILENO, "", strlen("Hello world\n")) == \
-        write(STDOUT_FILENO, "", strlen("Hello world\n")) );
 }
 
 TEST_CASE( "[ft_read]", "[Mandatory]") {
@@ -49,3 +47,4 @@ TEST_CASE( "[ft_read]", "[Mandatory]") {
     REQUIRE( ft_read(-1, arr, 50) == read(-1, arr, 50) );
     REQUIRE( ft_read(fd1, arr, 50) == read(fd2, arr, 50) );
 }
+
