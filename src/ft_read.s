@@ -1,7 +1,7 @@
-    section .text
-    global  _ft_read
-    extern ___error
+global  _ft_read
+extern ___error
 
+section .text
 _ft_read:
     push    rbp
     mov     rbp, rsp

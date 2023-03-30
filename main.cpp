@@ -25,8 +25,17 @@ TEST_CASE( "[ft_strcmp]", "[Mandatory]") {
 }
 
 TEST_CASE( "[ft_strdup]", "[Mandatory]") {
-    REQUIRE( ft_strcmp(ft_strdup("Hello world!"), strdup("Hello world!")) == 0 );
-    REQUIRE( ft_strcmp(ft_strdup(""), strdup("")) == 0 );
+    char *ft_str1 = ft_strdup("Hello world!");
+    char *str1 = strdup("Hello world!");
+    char *ft_str2 = ft_strdup("");
+    char *str2 = strdup("");
+
+    REQUIRE( ft_strcmp(ft_str1, str1) == 0 );
+    REQUIRE( ft_strcmp(ft_str2, str2) == 0 );
+    free(ft_str1);
+    free(ft_str2);
+    free(str1);
+    free(str2);
 }
 
 TEST_CASE( "[ft_write]", "[Mandatory]") {
@@ -46,5 +55,7 @@ TEST_CASE( "[ft_read]", "[Mandatory]") {
     int fd2 = open("text.txt", O_RDONLY);
     REQUIRE( ft_read(-1, arr, 50) == read(-1, arr, 50) );
     REQUIRE( ft_read(fd1, arr, 50) == read(fd2, arr, 50) );
+    close(fd1);
+    close(fd2);
 }
 

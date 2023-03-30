@@ -38,4 +38,4 @@ re: fclean all
 
 .PHONY: test
 test: $(NAME)
-	@$(CC) $(CFLAGS) -L$(LDDIR) $(LDFLAGS) -I$(INCLUDE_DIR) -o $(TEST) $(MAIN) $(CATCH_SRC)
+	@$(CC) $(CFLAGS) -g -L$(LDDIR) $(LDFLAGS) -I$(INCLUDE_DIR) -o $(TEST) $(MAIN) $(CATCH_SRC)

@@ -7,9 +7,9 @@
 ;       }
 ;       return ((unsigned char)*s1 - (unsigned char)*s2);
 ;   }
-    section .text
-    global  _ft_strcmp
+global  _ft_strcmp
 
+section .text
 _ft_strcmp:
     push    rbp
     mov     rbp, rsp

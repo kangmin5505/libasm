@@ -1,54 +1,106 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <inttypes.h>
+#include <string.h>
 
 typedef struct s_list {
     void    *data;
     struct s_list   *next;
 }   t_list;
 
-int     ft_atoi_base(char *str, char *base) {
-    
-    return 0;
-}
 
-void    ft_list_push_front(t_list **begin_list, void *data) {
-    t_list *new_list = malloc(sizeof(t_list));
-    if (!new_list)
-        return;
+int     ft_list_size(t_list *);
+void    ft_list_push_front(t_list **begin_list, void *data);
+char    *ft_strdup(const char*);
+void    ft_list_remove_if(t_list **begin_list, void *data_ref, int (*cmp)(), void (*free_fct)(void *));
 
-    new_list->data = data;
-    new_list->next = *begin_list;
-    *begin_list = new_list;
-}
-
-void    ft_list_remove_if(t_list **begin_list, void *data_ref, int (*cmp)(), void (*free_fct)(void *)) {
-    t_list dummy;
-    dummy.next = *begin_list;
-    t_list *prev = &dummy;
-    t_list *curr = *begin_list;
-
-    while (curr) {
-        if ((*cmp)(curr->data, data_ref) == 0) {
-            prev->next = curr->next;
-            (*free_fct)(curr->data);
-            free(curr);
-            break;
-        }
-        prev = curr;
-        curr = curr->next;
+int ft_strlen(char *str) {
+    int len = 0;
+    while (str[len]) {
+        len++;
     }
-    *begin_list = dummy.next;
+    return len;
 }
 
-int     ft_list_size(t_list *begin_list) {
-    int size = 0;
+int    skip_space(char *str) {
+    int idx = 0;
 
-    while (begin_list) {
-        ++size;
-        begin_list = begin_list->next;
-    };
-    return size;
+    while (str[idx]) {
+        if (str[idx] != 32 || str[idx] < 9 || str[idx] > 13)
+            break;
+        ++idx;
+    }
+    return idx;
 }
+
+bool    is_possible(char *base, int base_len)
+{
+	int	    i = 0;
+	bool    check[255];
+
+	if (base_len == 0 || base_len == 1)
+		return false;
+
+	while (i < 255)
+		check[i++] = false;
+
+    while (*base) {
+        if (check[(int)(*base)] == true)
+            return false;
+        if (*base == '+' || *base == '-')
+            return false;
+        if (*base == 32 || (9 <= *base && *base <= 13))
+            return false;
+        ++base;
+    }
+    return true;
+}
+
+int	ft_atoi_base(char *str, char *base)
+{
+	int idx = skip_space(str);
+    int sign = -1;
+    int base_len = ft_strlen(base);
+    int check_idx = 0;
+    int num = 0;
+    int flow_check = INT_MAX / 10;
+
+    if (str[idx] == '-') {
+        sign = 1;
+        ++idx;
+    }
+    if (str[idx] == '+')
+        ++idx;
+
+	if (!is_possible(base, base_len))
+		return 0;
+
+	while (str[idx]) 
+	{
+		check_idx = 0;
+		while (check_idx < base_len)
+		{
+			if (str[idx] == base[check_idx])
+			{
+                if (sign == -1 && (num > flow_check || (-num == flow_check && check_idx > 7)))
+                    return 0;
+                if (sign == 1 && (num > flow_check || (-num == flow_check && check_idx > 8)))
+                    return 0;
+                 num = num * base_len - check_idx;
+				break;
+			}
+			check_idx++;
+		}
+
+		if (check_idx == base_len)
+			break;
+		idx++;
+	}
+	return sign * num;
+}
+
 
 t_list *split_list(t_list *node) {
     t_list *prev = NULL;
@@ -136,22 +188,27 @@ int main(void)
     *num3 = -10;
     ft_list_push_front(&begin_list, num3);
     int *num4 = malloc(sizeof(int));
-    *num4 = 2;
+    *num4 = 3;
     ft_list_push_front(&begin_list, num4);
 
     print_all_list(begin_list);
     printf("%d\n", ft_list_size(begin_list));
 
-    // int num = 3;
-    // ft_list_remove_if(&begin_list, &num, &compare, &free_function);
-    // printf("-------------\n");
-    // print_all_list(begin_list);
-    // printf("%d\n", ft_list_size(begin_list));
-
-
-    ft_list_sort(&begin_list, compare);
+    int num = -10;
+    ft_list_remove_if(&begin_list, &num, &compare, &free_function);
+    printf("-------------\n");
     print_all_list(begin_list);
+    printf("%d\n", ft_list_size(begin_list));
 
-    system("leaks main");
+
+    // ft_list_sort(&begin_list, compare);
+    // print_all_list(begin_list);
+
+    // printf("result : %d\n", ft_atoi_base("-234423kj", "0123456789"));
+    // printf("atoi : %d %d\n", atoi("2147483647"), atoi("-2147483648"));
+    // printf("check underflow : %d %d \n", ft_atoi_base("2147483647", "0123456789"), ft_atoi_base("2147483648", "0123456789"));
+    // printf("check overflow : %d %d\n", ft_atoi_base("-2147483648", "0123456789"), ft_atoi_base("-2147483649", "0123456789"));
+
+    // system("leaks main");
     return 0;
 }

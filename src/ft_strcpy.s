@@ -10,9 +10,9 @@
 ;   }
 
 
-    section .text
-    global  _ft_strcpy
+global  _ft_strcpy
 
+section .text
 _ft_strcpy:
     push    rbp
     mov     rbp, rsp

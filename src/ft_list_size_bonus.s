@@ -14,15 +14,23 @@
 ;       };
 ;       return size;
 ;   }
+global  _ft_list_size
+extern  _printf
 
-
-    section .text
-    global  _ft_list_size
-
-
+section .text
 _ft_list_size:
     push    rbp
     mov     rbp, rsp
 
+    xor     rax, rax
+
+.loop_start:
+    cmp     rdi, 0x00
+    je      .loop_end
+    inc     rax
+    mov     rdi, [rdi + 8]
+    jmp     .loop_start
+
+.loop_end:
     pop     rbp
     ret

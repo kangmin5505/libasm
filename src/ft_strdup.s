@@ -15,15 +15,16 @@
 ;       *s2 = '\0';
 ;       return ret;
 ;   }
-    section .text
-    global  _ft_strdup
-    extern  _malloc
-    extern  _ft_strlen
+global  _ft_strdup
+extern  _malloc
+extern  _ft_strlen
 
+section .text
 _ft_strdup:
     push    rbp
     mov     rbp, rsp
 
+    sub     rsp, 8
     push    rdi             
     call    _ft_strlen
     inc     rax
@@ -50,6 +51,8 @@ _ft_strdup:
     mov     byte [rdx], 0x00
     mov     rax, rcx
 
+
+    pop     rdi
     add     rsp, 8
     pop     rbp
     ret
@@ -57,6 +60,7 @@ _ft_strdup:
 .null_error:
     mov     rax, 0x00
 
+    pop     rdi
     add     rsp, 8
     pop     rbp
     ret
