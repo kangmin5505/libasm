@@ -16,91 +16,85 @@ void    ft_list_push_front(t_list **begin_list, void *data);
 char    *ft_strdup(const char*);
 void    ft_list_remove_if(t_list **begin_list, void *data_ref, int (*cmp)(), void (*free_fct)(void *));
 void    ft_list_sort(t_list **begin_list, int (*cmp)());
+int     ft_strlen(char *str);
+int	ft_atoi_base(char *str, char *base);
 
-int ft_strlen(char *str) {
-    int len = 0;
-    while (str[len]) {
-        len++;
-    }
-    return len;
-}
 
-int    skip_space(char *str) {
-    int idx = 0;
+// int    skip_space(char *str) {
+//     int idx = 0;
 
-    while (str[idx]) {
-        if (str[idx] != 32 || str[idx] < 9 || str[idx] > 13)
-            break;
-        ++idx;
-    }
-    return idx;
-}
+//     while (str[idx]) {
+//         if (str[idx] != 32 || str[idx] < 9 || str[idx] > 13)
+//             break;
+//         ++idx;
+//     }
+//     return idx;
+// }
 
-bool    is_possible(char *base, int base_len)
-{
-	int	    i = 0;
-	bool    check[255];
+// bool    is_possible(char *base, int base_len)
+// {
+// 	if (base_len == 0 || base_len == 1)
+// 		return false;
 
-	if (base_len == 0 || base_len == 1)
-		return false;
+// 	int	    i = 0;
+// 	bool    check[256];
 
-	while (i < 255)
-		check[i++] = false;
+// 	while (i < 256)
+// 		check[i++] = false;
 
-    while (*base) {
-        if (check[(int)(*base)] == true)
-            return false;
-        if (*base == '+' || *base == '-')
-            return false;
-        if (*base == 32 || (9 <= *base && *base <= 13))
-            return false;
-        ++base;
-    }
-    return true;
-}
+//     while (*base) {
+//         if (check[(int)(*base)] == true)
+//             return false;
+//         if (*base == '+' || *base == '-')
+//             return false;
+//         if (*base == 32 || (9 <= *base && *base <= 13))
+//             return false;
+//         ++base;
+//     }
+//     return true;
+// }
 
-int	ft_atoi_base(char *str, char *base)
-{
-	int idx = skip_space(str);
-    int sign = -1;
-    int base_len = ft_strlen(base);
-    int check_idx = 0;
-    int num = 0;
-    int flow_check = INT_MAX / 10;
+// int	ft_atoi_base(char *str, char *base)
+// {
+// 	int idx = skip_space(str);
+//     int sign = -1;
+//     int base_len = ft_strlen(base);
+//     int check_idx = 0;
+//     int num = 0;
+//     int flow_check = INT_MAX / 10;
 
-    if (str[idx] == '-') {
-        sign = 1;
-        ++idx;
-    }
-    if (str[idx] == '+')
-        ++idx;
+    // if (str[idx] == '-' || str[idx] == '+') {
+    //     if (str[idx] == '-')
+    //         sign = 1;
+    //     ++idx;
+    // }
 
-	if (!is_possible(base, base_len))
-		return 0;
+// 	if (!is_possible(base, base_len))
+// 		return 0;
 
-	while (str[idx]) 
-	{
-		check_idx = 0;
-		while (check_idx < base_len)
-		{
-			if (str[idx] == base[check_idx])
-			{
-                if (sign == -1 && (num > flow_check || (-num == flow_check && check_idx > 7)))
-                    return 0;
-                if (sign == 1 && (num > flow_check || (-num == flow_check && check_idx > 8)))
-                    return 0;
-                 num = num * base_len - check_idx;
-				break;
-			}
-			check_idx++;
-		}
+// 	while (str[idx]) 
+// 	{
+// 		check_idx = 0;
+// 		while (check_idx < base_len)
+// 		{
+// 			if (str[idx] == base[check_idx])
+// 			{
+//                 if (sign == -1 && (num > flow_check || (-num == flow_check && check_idx > 7)))
+//                     return 0;
+//                 if (sign == 1 && (num > flow_check || (-num == flow_check && check_idx > 8)))
+//                     return 0;
+//                  num = num * base_len - check_idx;
+// 				break;
+// 			}
+// 			check_idx++;
+// 		}
 
-		if (check_idx == base_len)
-			break;
-		idx++;
-	}
-	return sign * num;
-}
+// 		if (check_idx == base_len)
+// 			break;
+// 		idx++;
+// 	}
+// 	return sign * num;
+// }
 
 
 // t_list *split_list(t_list *node) {
@@ -119,20 +113,20 @@ int	ft_atoi_base(char *str, char *base)
 //     return slow;
 // }
 
-t_list *merge_list(t_list *left_node, t_list *right_node, int (*cmp)()) {
-    if (left_node == NULL)
-        return right_node;
-    if (right_node == NULL)
-        return left_node;
+// t_list *merge_list(t_list *left_node, t_list *right_node, int (*cmp)()) {
+//     if (left_node == NULL)
+//         return right_node;
+//     if (right_node == NULL)
+//         return left_node;
 
-    if ((*cmp)(left_node->data, right_node->data) <= 0) {
-        left_node->next = merge_list(left_node->next, right_node, cmp);
-        return left_node;
-    } else {
-        right_node->next = merge_list(left_node, right_node->next, cmp);
-        return right_node;
-    }
-}
+//     if ((*cmp)(left_node->data, right_node->data) <= 0) {
+//         left_node->next = merge_list(left_node->next, right_node, cmp);
+//         return left_node;
+//     } else {
+//         right_node->next = merge_list(left_node, right_node->next, cmp);
+//         return right_node;
+//     }
+// }
 
 // t_list *merge_sort(t_list *node, int (*cmp)()) {
 //     if (node->next == NULL)
@@ -177,25 +171,35 @@ void free_function(void *data) {
 
 int main(void)
 {
-    int *num0 = malloc(sizeof(int));
-    *num0 = 0;
-    t_list *begin_list = creat_list(num0);
-    int *num1 = malloc(sizeof(int));
-    *num1 = 1;
-    ft_list_push_front(&begin_list, num1);
+    // int *num0 = malloc(sizeof(int));
+    // *num0 = 0;
+    // t_list *begin_list = creat_list(num0);
+    // int *num1 = malloc(sizeof(int));
+    // *num1 = 1;
+    // ft_list_push_front(&begin_list, num1);
 
-    int *num2 = malloc(sizeof(int));
-    *num2 = 2;
-    ft_list_push_front(&begin_list, num2);
-    int *num3 = malloc(sizeof(int));
-    *num3 = 3;
-    ft_list_push_front(&begin_list, num3);
-    int *num4 = malloc(sizeof(int));
-    *num4 = 4;
-    ft_list_push_front(&begin_list, num4);
+    // int *num2 = malloc(sizeof(int));
+    // *num2 = 2;
+    // ft_list_push_front(&begin_list, num2);
+    // int *num3 = malloc(sizeof(int));
+    // *num3 = 3;
+    // ft_list_push_front(&begin_list, num3);
+    // int *num4 = malloc(sizeof(int));
+    // *num4 = 4;
+    // ft_list_push_front(&begin_list, num4);
+    
+    // int *num5 = malloc(sizeof(int));
+    // *num5 = -5;
+    // ft_list_push_front(&begin_list, num5);
+    // int *num6 = malloc(sizeof(int));
+    // *num6 = -100;
+    // ft_list_push_front(&begin_list, num6);
+    // int *num7 = malloc(sizeof(int));
+    // *num7 = 100;
+    // ft_list_push_front(&begin_list, num7);
 
-    print_all_list(begin_list);
-    printf("%d\n", ft_list_size(begin_list));
+    // print_all_list(begin_list);
+    // printf("%d\n", ft_list_size(begin_list));
 
     // int num = 4;
     // printf("%p\n", *begin_list);
@@ -209,13 +213,13 @@ int main(void)
     // printf("%d\n", ft_list_size(begin_list));
 
 
-    ft_list_sort(&begin_list, compare);
-    print_all_list(begin_list);
+    // ft_list_sort(&begin_list, compare);
+    // print_all_list(begin_list);
 
-    // printf("result : %d\n", ft_atoi_base("-234423kj", "0123456789"));
-    // printf("atoi : %d %d\n", atoi("2147483647"), atoi("-2147483648"));
-    // printf("check underflow : %d %d \n", ft_atoi_base("2147483647", "0123456789"), ft_atoi_base("2147483648", "0123456789"));
-    // printf("check overflow : %d %d\n", ft_atoi_base("-2147483648", "0123456789"), ft_atoi_base("-2147483649", "0123456789"));
+    printf("result : %d\n", ft_atoi_base("-134423kj", "0123456789"));
+    printf("atoi : %d %d\n", atoi("2147483647"), atoi("-2147483648"));
+    printf("check underflow : %d %d \n", ft_atoi_base("2147483647", "0123456789"), ft_atoi_base("2147483648", "0123456789"));
+    printf("check overflow : %d %d\n", ft_atoi_base("-2147483648", "0123456789"), ft_atoi_base("-2147483649", "0123456789"));
 
     // system("leaks main");
     return 0;

@@ -15,7 +15,6 @@
 ;       return size;
 ;   }
 global  _ft_list_size
-extern  _printf
 
 section .text
 _ft_list_size:

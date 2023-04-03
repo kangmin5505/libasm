@@ -47,10 +47,8 @@
 ;   void    ft_list_sort(t_list **begin_list, int (*cmp)()) {
 ;       *begin_list = merge_sort(*begin_list, cmp);
 ;   }
-
-    section .text
-    global  _ft_list_sort
-    extern  _merge_list
+section .text
+global  _ft_list_sort
     
 _ft_list_sort:
     push    rbp
@@ -104,7 +102,7 @@ _ft_list_sort:
     mov     rdi, [rbp - 8]
     mov     rsi, [rbp - 24]
     mov     rdx, [rbp - 16]
-    call    _merge_list
+    call    .merge_list
 
     add     rsp, 32
     pop     rbp
@@ -141,6 +139,18 @@ _ft_list_sort:
     call    [rbp - 24]
     jle     .merge_list_left_next
 
+    ;   call merge_list(left_node, right_node->next, cmp)
+    mov     rdi, [rbp - 8]
+    mov     rsi, [rbp - 16]
+    mov     rsi, [rsi + 8]
+    mov     rdx, [rbp - 24]
+    call    .merge_list
+
+    mov     r8, [rbp - 16]
+    mov     [r8 + 8], rax
+    jmp     .merge_list_return_right_node
+
+.merge_list_left_next:
     ;   call merge_list(left_node->next, right_node, cmp)
     mov     rdi, [rbp - 8]
     mov     rdi, [rdi + 8]
@@ -151,20 +161,7 @@ _ft_list_sort:
     mov     r8, [rbp - 8]
     mov     [r8 + 8], rax
     jmp     .merge_list_return_left_node
-
-.merge_list_left_next:
-    ;   call merge_list(left_node, right_node->next, cmp)
-    mov     rdi, [rbp - 8]
-    mov     rsi, [rbp - 16]
-    mov     rsi, [rsi]
-    mov     rdx, [rbp - 24]
-    call    .merge_list
-
-    mov     r8, [rbp - 16]
-    mov     [r8 + 8], rax
-    jmp     .merge_list_return_left_node
-
-
+    
 .merge_list_return_right_node:
     mov     rax, [rbp - 16]
 
@@ -219,7 +216,7 @@ _ft_list_sort:
     mov     qword [r8 + 8], 0x00
 
 .split_list_return:
-    mov     rax, [rbp - 24]
+    mov     rax, [rbp - 16]
     add     rsp, 24
     pop     rbp
     ret
