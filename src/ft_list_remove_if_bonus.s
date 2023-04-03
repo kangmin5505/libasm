@@ -32,47 +32,67 @@ endstruc
 global  _ft_list_remove_if
 extern  _free
 
+section .data
+    my_struct:
+        istruc s_list
+            at data, dq 0x00
+            at next, dq 0x00
+        iend
+
 section .text
 _ft_list_remove_if:
     push    rbp
     mov     rbp, rsp
 
-    sub     rsp, 32         ;   t_list dummy
+    push    rdi
+    push    rsi
+    push    rdx
+    push    rcx
+    sub     rsp, 16         ;   t_list dummy
+
     mov     r8, [rdi]
-    mov     [rbp - 8], r8   ;   dummy.next
-    mov     [rbp - 16], rbp ;   t_list *prev
-    mov     [rbp - 24], r8  ;   t_list *curr
+    mov     [rel my_struct + 8], r8   ;   dummy.next
+    lea     rax, [rel my_struct]
+    mov     [rbp - 32], rax ;   t_list *prev
+    mov     [rbp - 40], r8  ;   t_list *curr
 
 .loop_start:
-    cmp     qword [rbp - 24], 0x00
+    cmp     qword [rbp - 40], 0x00
     je      .loop_end
 
-    mov     rdi, [rbp - 24]
-    call    rdx
+    ;   if (*cmp)(curr->data, data_ref) == 0
+    mov     rdi, [rbp - 40]
+    mov     rdi, [rdi]
+    call    [rbp - 24]
     cmp     eax, 0x00
     je      .remove_node
 
-    mov     r8, [rbp - 24]
-    mov     [rbp - 16], r8  ;   prev = curr
-    mov     r8, [rbp - 24]
-    mov     r9, [r8 + 8]  
-    mov     [rbp - 24], r9  ;   curr = curr->next;
+    mov     rax, [rbp - 40]
+    mov     [rbp - 32], rax  ;   prev = curr
+    mov     r8, [rbp - 40]
+    mov     rax, [r8 + 8]  
+    mov     [rbp - 40], rax  ;   curr = curr->next;
     jmp     .loop_start
 
 .remove_node: 
-    mov     r8, [rbp - 24]
-    mov     rdx, [r8 + 8]
-    mov     [rbp - 16], rdx
-    mov     r8, [rbp - 24]
+    mov     r8, [rbp - 40]
+    mov     r9, [r8 + 8]    ; curr->next
+
+    mov     r8, [rbp - 32]
+    mov     [r8 + 8], r9    ;   prev->next
+
+    mov     r8, [rbp - 40]
     mov     rdi, [r8]
-    call    rcx
-    mov     rdi, [rbp - 24]
+    call    [rbp - 24]
+    mov     rdi, [rbp - 40]
     call    _free
 
 .loop_end:
+    lea     r8, [rel my_struct + 8]
+    mov     rax, [r8]
     mov     r8, [rbp - 8]
-    mov     [rdi], r8       ;   *begin_list = dummy.next
+    mov     [r8], rax       ;   *begin_list = dummy.next
 
-    add     rsp, 32
+    add     rsp, 48
     pop     rbp
     ret

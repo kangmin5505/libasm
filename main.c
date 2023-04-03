@@ -15,6 +15,7 @@ int     ft_list_size(t_list *);
 void    ft_list_push_front(t_list **begin_list, void *data);
 char    *ft_strdup(const char*);
 void    ft_list_remove_if(t_list **begin_list, void *data_ref, int (*cmp)(), void (*free_fct)(void *));
+void    ft_list_sort(t_list **begin_list, int (*cmp)());
 
 int ft_strlen(char *str) {
     int len = 0;
@@ -102,21 +103,21 @@ int	ft_atoi_base(char *str, char *base)
 }
 
 
-t_list *split_list(t_list *node) {
-    t_list *prev = NULL;
-    t_list *slow = node;
-    t_list *fast = node;
+// t_list *split_list(t_list *node) {
+//     t_list *prev = NULL;
+//     t_list *slow = node;
+//     t_list *fast = node;
 
-    while (fast && fast->next) {
-        fast = fast->next->next;
-        prev = slow;
-        slow = slow->next;
-    }
-    if (prev)
-        prev->next = NULL;
+//     while (fast && fast->next) {
+//         fast = fast->next->next;
+//         prev = slow;
+//         slow = slow->next;
+//     }
+//     if (prev)
+//         prev->next = NULL;
 
-    return slow;
-}
+//     return slow;
+// }
 
 t_list *merge_list(t_list *left_node, t_list *right_node, int (*cmp)()) {
     if (left_node == NULL)
@@ -133,19 +134,19 @@ t_list *merge_list(t_list *left_node, t_list *right_node, int (*cmp)()) {
     }
 }
 
-t_list *merge_sort(t_list *node, int (*cmp)()) {
-    if (node->next == NULL)
-        return node;
+// t_list *merge_sort(t_list *node, int (*cmp)()) {
+//     if (node->next == NULL)
+//         return node;
 
-    t_list *middle_node = split_list(node);
-    node = merge_sort(node, cmp);
-    middle_node = merge_sort(middle_node, cmp);
-    return merge_list(node, middle_node, cmp);
-}
+//     t_list *middle_node = split_list(node);
+//     node = merge_sort(node, cmp);
+//     middle_node = merge_sort(middle_node, cmp);
+//     return merge_list(node, middle_node, cmp);
+// }
 
-void    ft_list_sort(t_list **begin_list, int (*cmp)()) {
-    *begin_list = merge_sort(*begin_list, cmp);
-}
+// void    ft_list_sort(t_list **begin_list, int (*cmp)()) {
+//     *begin_list = merge_sort(*begin_list, cmp);
+// }
 
 void    print_all_list(t_list *begin_list) {
     while (begin_list) {
@@ -169,7 +170,9 @@ int compare(void *p1, void *p2) {
 }
 
 void free_function(void *data) {
+    printf("%d\n", *(int*)data);
     free(data);
+    return;
 }
 
 int main(void)
@@ -178,31 +181,36 @@ int main(void)
     *num0 = 0;
     t_list *begin_list = creat_list(num0);
     int *num1 = malloc(sizeof(int));
-    *num1 = -5;
+    *num1 = 1;
     ft_list_push_front(&begin_list, num1);
 
     int *num2 = malloc(sizeof(int));
     *num2 = 2;
     ft_list_push_front(&begin_list, num2);
     int *num3 = malloc(sizeof(int));
-    *num3 = -10;
+    *num3 = 3;
     ft_list_push_front(&begin_list, num3);
     int *num4 = malloc(sizeof(int));
-    *num4 = 3;
+    *num4 = 4;
     ft_list_push_front(&begin_list, num4);
 
     print_all_list(begin_list);
     printf("%d\n", ft_list_size(begin_list));
 
-    int num = -10;
-    ft_list_remove_if(&begin_list, &num, &compare, &free_function);
-    printf("-------------\n");
-    print_all_list(begin_list);
-    printf("%d\n", ft_list_size(begin_list));
+    // int num = 4;
+    // printf("%p\n", *begin_list);
+    // ft_list_remove_if(&begin_list, &num, &compare, &free_function);
+    // int remove_num = 0;
+    // ft_list_remove_if(&begin_list, &remove_num, &compare, &free_function);
+    // printf("%p\n", *begin_list);
 
-
-    // ft_list_sort(&begin_list, compare);
+    // printf("-------------\n");
     // print_all_list(begin_list);
+    // printf("%d\n", ft_list_size(begin_list));
+
+
+    ft_list_sort(&begin_list, compare);
+    print_all_list(begin_list);
 
     // printf("result : %d\n", ft_atoi_base("-234423kj", "0123456789"));
     // printf("atoi : %d %d\n", atoi("2147483647"), atoi("-2147483648"));
