@@ -58,9 +58,9 @@
 ;       	{
 ;       		if (str[idx] == base[check_idx])
 ;       		{
-;                     if (sign == -1 && (num > flow_check || (-num == flow_check && check_idx > 7)))
+;                     if (sign == -1 && (-num > flow_check || (-num == flow_check && check_idx > 7)))
 ;                         return 0;
-;                     if (sign == 1 && (num > flow_check || (-num == flow_check && check_idx > 8)))
+;                     if (sign == 1 && (-num > flow_check || (-num == flow_check && check_idx > 8)))
 ;                         return 0;
 ;                      num = num * base_len - check_idx;
 ;       			break;
@@ -100,23 +100,25 @@ _ft_atoi_base:
     ; idiv    r8w
     mov     dword [rbp - 44], 0xccccccc       ;   flow_check
 
-.ft_atoi_base_check_minus:
+.ft_atoi_base_check_sign:
     mov     r8d, dword [rbp - 24]
     mov     r9, [rbp - 8]
     add     r9, r8
     cmp     byte [r9], 0x2d
-    jne      .ft_atoi_base_check_plus
+    je      .ft_atoi_base_check_minus
 
+    cmp     byte [r9], 0x2b
+    je      .ft_atoi_base_check_plus
+
+    jmp     .ft_atoi_base_check_is_possible
+
+.ft_atoi_base_check_minus:
     mov     dword [rbp - 28], 0x01
     inc     dword [rbp - 24]
 
-.ft_atoi_base_check_plus:
-    mov     r8d, dword [rbp - 24]
-    mov     r9, [rbp - 8]
-    add     r9, r8
-    cmp     byte [r9], 0x2b
-    jne     .ft_atoi_base_check_is_possible
+    jmp     .ft_atoi_base_check_is_possible
 
+.ft_atoi_base_check_plus:
     inc     dword [rbp - 24]
 
 .ft_atoi_base_check_is_possible:
@@ -127,17 +129,17 @@ _ft_atoi_base:
     ; je      .ft_atoi_base_return_zero
 
 .ft_atoi_base_loop:
-    mov     r8d, dword [rbp - 24]
+    mov     r8d, dword [rbp - 24]       ;   [rbp - 24] == idx
     mov     r9, [rbp - 8]
     add     r9, r8
     cmp     byte [r9], 0x00
     je      .ft_atoi_base_return
 
-    mov     dword [rbp - 36], 0x00
+    mov     dword [rbp - 36], 0x00      ;   [rbp - 36] == check_idx
 
 .ft_atoi_base_base_loop:
-    mov     r8d, dword [rbp - 32]
-    cmp     dword [rbp - 36], r8d
+    mov     r8d, dword [rbp - 32]       ;   [rbp - 32] == base_len
+    cmp     dword [rbp - 36], r8d       ;   [rbp - 36] == check_idx
     jnl     .ft_atoi_base_char_not_exist
 
     mov     r8d, dword [rbp - 24]
@@ -150,14 +152,35 @@ _ft_atoi_base:
 
     mov     al, byte [r10]
     cmp     byte [r9], al
-    jne      .ft_atoi_base_inc_check_idx
+    jne     .ft_atoi_base_inc_check_idx
 
 .ft_atoi_base_check_overflow:
     cmp     dword [rbp - 28], 0xffffffff
     jne     .ft_atoi_base_check_underflow
     
     mov     r8d, dword [rbp - 44]
-    cmp     dword [rbp - 40], r8d
+    mov     r9d, dword [rbp - 40]
+    imul    r9d, 0xffffffff
+    cmp     r9d, r8d
+    jg     .ft_atoi_base_return_zero
+
+    mov     eax, dword [rbp - 40]       ;   [rbp - 40] == num
+    imul    eax, 0xffffffff
+    cmp     eax, [rbp - 44]             ;   [rbp - 44] == flow_check
+    jne     .ft_atoi_base_calc_num
+
+    cmp     dword [rbp - 36], 0x07      ;   [rbp - 36] == check_idx
+    jg      .ft_atoi_base_return_zero
+
+
+.ft_atoi_base_check_underflow:
+    cmp     dword [rbp - 28], 0x01
+    jne     .ft_atoi_base_calc_num
+    
+    mov     r8d, dword [rbp - 44]
+    mov     r9d, dword [rbp - 40]
+    imul    r9d, 0xffffffff
+    cmp     r9d, r8d
     jg     .ft_atoi_base_return_zero
 
     mov     eax, dword [rbp - 40]
@@ -165,32 +188,16 @@ _ft_atoi_base:
     cmp     eax, [rbp - 44]
     jne     .ft_atoi_base_calc_num
 
-    cmp     dword [rbp - 36], 0x07
-    jg      .ft_atoi_base_return_zero
-
-
-.ft_atoi_base_check_underflow:
-    cmp     dword [rbp - 28], 0xffffffff
-    jne     .ft_atoi_base_check_underflow
-    
-    mov     r8d, dword [rbp - 44]
-    cmp     dword [rbp - 40], r8d
-    jg     .ft_atoi_base_return_zero
-
-    mov     eax, dword [rbp - 40]
-    imul    eax, 0x01
-    cmp     eax, [rbp - 44]
-    jne     .ft_atoi_base_calc_num
-
     cmp     dword [rbp - 36], 0x08
     jg      .ft_atoi_base_return_zero
     
 .ft_atoi_base_calc_num:
-    mov     eax, dword [rbp - 40]
-    mov     r8d, [rbp - 32]
+    mov     eax, dword [rbp - 40]       ;   [rbp - 40] == num
+    mov     r8d, [rbp - 32]             ;   [rbp - 32] == base_len
     imul    eax, r8d
-    mov     r8d, [rbp - 36]
-    sub     dword [rbp - 40], r8d
+    mov     dword [rbp - 40], eax
+    mov     r8d, [rbp - 36]             ;   [rbp - 36] == check_idx
+    sub     dword [rbp - 40], r8d       ;   [rbp - 40] == num
     jmp     .ft_atoi_base_char_not_exist
 
 
@@ -209,8 +216,8 @@ _ft_atoi_base:
 
 
 .ft_atoi_base_return:
-    mov     eax, dword [rbp - 28]
-    mov     r9d, dword [rbp - 40]
+    mov     eax, dword [rbp - 28]   ;   [rbp - 28] == sign
+    mov     r9d, dword [rbp - 40]   ;   [rbp - 40] == num
     imul    eax, r9d
 
     add     rsp, 40

@@ -58,4 +58,3 @@ TEST_CASE( "[ft_read]", "[Mandatory]") {
     close(fd1);
     close(fd2);
 }
-
