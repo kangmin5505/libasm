@@ -57,11 +57,11 @@ $(BONUS_NAME): $(OBJECTS) $(BONUS_OBJECTS)
 
 .PHONY: test
 test: $(NAME)
-	@$(CC) $(CFLAGS) -L$(LDDIR) $(LDFLAGS) -I$(INCLUDE_DIR) -o $(TEST) $(MAIN) $(CATCH_SRC)
+	@$(CC) $(CFLAGS) -g -L$(LDDIR) $(LDFLAGS) -I$(INCLUDE_DIR) -o $(TEST) $(MAIN) $(CATCH_SRC)
 	@./test
 
 .PHONY: test_bonus
 test_bonus: $(BONUS_NAME)
-	@clang -L$(LDDIR) $(LDFLAGS_BONUS) -I$(INCLUDE_DIR) -o $(TEST) $(MAIN_BONUS)
+	@clang -L$(LDDIR) -g $(LDFLAGS_BONUS) -I$(INCLUDE_DIR) -o $(TEST) $(MAIN_BONUS)
 	@./test
 

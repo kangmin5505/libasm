@@ -76,11 +76,14 @@ int main(void)
     ft_list_sort(&begin_list, compare);
     print_all_list(begin_list);
 
+    printf("strtol : %ld, ft_atoi_base %d\n", strtol("0", NULL, 2), ft_atoi_base("100", ""));
     printf("strtol : %ld, ft_atoi_base %d\n", strtol("0", NULL, 2), ft_atoi_base("0", "01"));
-    printf("strtol : %ld, ft_atoi_base %d\n", strtol("1", NULL, 2), ft_atoi_base("1", "01"));
+    printf("strtol : %ld, ft_atoi_base %d\n", strtol("1", NULL, 2), ft_atoi_base("1", "011"));
     printf("strtol : %ld, ft_atoi_base %d\n", strtol("-1", NULL, 10), ft_atoi_base("-1", "01"));
-    printf("strtol : %ld, ft_atoi_base %d\n", strtol("2147483647", NULL, 2), ft_atoi_base("-1001", "01"));
-    printf("strtol : %ld, ft_atoi_base %d\n", strtol("2147483648", NULL, 2), ft_atoi_base("1001", "01"));
+    printf("strtol : %ld, ft_atoi_base %d\n", strtol("-1001", NULL, 2), ft_atoi_base("-1001", "01"));
+    printf("strtol : %ld, ft_atoi_base %d\n", strtol("1001", NULL, 2), ft_atoi_base("1001", "01"));
+    printf("strtol : %ld, ft_atoi_base %d\n", strtol("-2147483648", NULL, 10), ft_atoi_base("-2147483648", "0123456789"));
+    printf("strtol : %ld, ft_atoi_base %d\n", strtol("2147483647", NULL, 10), ft_atoi_base("2147483647", "0123456789"));
     printf("strtol : %ld, ft_atoi_base %d\n", strtol("-2147483648", NULL, 16), ft_atoi_base("7fffffff", "0123456789abcdef"));
     printf("strtol : %ld, ft_atoi_base %d\n", strtol("-2147483649", NULL, 16), ft_atoi_base("-80000000", "0123456789abcdef"));
 

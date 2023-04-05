@@ -28,6 +28,7 @@
 ;               return false;
 ;           if (*base == 32 || (9 <= *base && *base <= 13))
 ;               return false;
+;           check[(int)(*base)] = true;
 ;           ++base;
 ;       }
 ;       return true;
@@ -40,14 +41,13 @@
 ;       int base_len = ft_strlen(base);
 ;       int check_idx = 0;
 ;       int num = 0;
-;       int flow_check = INT_MAX / 10;  
-;       if (str[idx] == '-') {
-;           sign = 1;
+;       int flow_check = INT_MAX / 10;
+;
+;       if (str[idx] == '-' || str[idx] == '+') {
+;           if (str[idx] == '-')
+;               sign = 1;
 ;           ++idx;
 ;       }
-;       if (str[idx] == '+')
-;           ++idx;
-
 ;       if (!is_possible(base, base_len))
 ;       	return 0;
 
@@ -122,11 +122,13 @@ _ft_atoi_base:
     inc     dword [rbp - 24]
 
 .ft_atoi_base_check_is_possible:
-    ; lea     rdi, [rbp - 16]
-    ; mov     rsi, [rbp - 32]
-    ; call    .is_possible
-    ; cmp     eax, 0x00
-    ; je      .ft_atoi_base_return_zero
+    mov     rdi, [rbp - 16]
+    mov     rsi, [rbp - 32]
+    call    .is_possible
+    cmp     al, 0x00
+    je      .ft_atoi_base_return_zero
+
+    mov     dword [rbp - 44], 0xccccccc       ;   ????? 왜 없어지지
 
 .ft_atoi_base_loop:
     mov     r8d, dword [rbp - 24]       ;   [rbp - 24] == idx
@@ -160,12 +162,12 @@ _ft_atoi_base:
     
     mov     r8d, dword [rbp - 44]
     mov     r9d, dword [rbp - 40]
-    imul    r9d, 0xffffffff
+    imul    r9d, -1
     cmp     r9d, r8d
     jg     .ft_atoi_base_return_zero
 
     mov     eax, dword [rbp - 40]       ;   [rbp - 40] == num
-    imul    eax, 0xffffffff
+    imul    eax, -1
     cmp     eax, [rbp - 44]             ;   [rbp - 44] == flow_check
     jne     .ft_atoi_base_calc_num
 
@@ -179,12 +181,12 @@ _ft_atoi_base:
     
     mov     r8d, dword [rbp - 44]
     mov     r9d, dword [rbp - 40]
-    imul    r9d, 0xffffffff
+    imul    r9d, -1
     cmp     r9d, r8d
     jg     .ft_atoi_base_return_zero
 
     mov     eax, dword [rbp - 40]
-    imul    eax, 0xffffffff
+    imul    eax, -1
     cmp     eax, [rbp - 44]
     jne     .ft_atoi_base_calc_num
 
@@ -198,8 +200,8 @@ _ft_atoi_base:
     mov     dword [rbp - 40], eax
     mov     r8d, [rbp - 36]             ;   [rbp - 36] == check_idx
     sub     dword [rbp - 40], r8d       ;   [rbp - 40] == num
+    
     jmp     .ft_atoi_base_char_not_exist
-
 
 .ft_atoi_base_inc_check_idx:
     inc     dword [rbp - 36]
@@ -236,14 +238,15 @@ _ft_atoi_base:
     mov     rbp, rsp
     xor     rax, rax
 
+    sub     rsp, 260
+    mov     dword [rbp - 8], 0x00
+    mov     ecx, 255
+    
     cmp     dword esi, 0x00
     je      .is_possible_return_false
     cmp     dword esi, 0x01
     je      .is_possible_return_false
 
-    sub     rsp, 260
-    mov     dword [rbp - 8], 0x00
-    mov     ecx, 255
 
 .is_possible_arr_init:
     cmp     dword [rbp - 8], ecx
@@ -254,8 +257,7 @@ _ft_atoi_base:
     sub     r9, r8
     mov     byte [r9], 0x00
 
-    inc     r8
-    mov     [rbp - 8], r8
+    inc     dword [rbp - 8]
 
     jmp     .is_possible_arr_init
 
@@ -287,6 +289,11 @@ _ft_atoi_base:
     jmp     .is_possible_return_false
 
 .is_possible_inc_base:
+    mov     r8b, byte [rdi]
+    lea     r9, [rbp - 12]
+    sub     r9, r8
+    mov     byte [r9], 0x01
+
     inc     rdi
     jmp     .is_possible_check_loop
 
