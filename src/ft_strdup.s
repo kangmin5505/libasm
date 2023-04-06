@@ -27,13 +27,13 @@ _ft_strdup:
     sub     rsp, 8
     push    rdi             
     call    _ft_strlen
-    inc     rax
-    mov     rdi, rax
+    inc     eax
+    mov     edi, eax
     call    _malloc
     mov     rdx, rax        ;   rdx = s2
 
     cmp     rdx, 0x00
-    je      .null_error
+    je      .return_null
 
     mov     rsi, [rsp]        ;   rsi = s1
     mov     rcx, rdx        ;   rcx = ret
@@ -51,13 +51,12 @@ _ft_strdup:
     mov     byte [rdx], 0x00
     mov     rax, rcx
 
-
     pop     rdi
     add     rsp, 8
     pop     rbp
     ret
 
-.null_error:
+.return_null:
     mov     rax, 0x00
 
     pop     rdi

@@ -1,5 +1,4 @@
 NAME=libasm.a
-BONUS_NAME=libasm_bonus.a
 AS=nasm
 ASFLAGS=-fmacho64
 AR=ar
@@ -8,9 +7,8 @@ CFLAGS=-std=c++17 -Wall -Wextra -Werror
 TEST=test
 LDDIR=.
 LDFLAGS=-lasm -arch x86_64
-LDFLAGS_BONUS=-lasm_bonus -arch x86_64
-MAIN=main.c
-MAIN_BONUS=main_bonus.c
+MAIN=main.cpp
+MAIN_BONUS=main_bonus.cpp
 CATCH_SRC=catch2/catch_amalgamated.cpp
 
 INCLUDE_DIR=include/
@@ -29,6 +27,7 @@ all: $(NAME)
 
 $(NAME): $(OBJECTS)
 	@$(AR) rcs $(NAME) $^
+	@echo '[!] make all: make $(NAME)'
 
 %.o : %.s
 	@$(AS) $(ASFLAGS) $< -o $@
@@ -37,31 +36,33 @@ $(NAME): $(OBJECTS)
 clean:
 	@$(RM) $(OBJECTS)
 	@$(RM) $(BONUS_OBJECTS)
+	@echo '[!] make clean: clean object files'
 
 .PHONY: fclean
 fclean: clean
 	@$(RM) $(NAME)
-	@$(RM) $(BONUS_NAME)
 	@$(RM) -r test*
 	@$(RM) -r *.dSYM
-
+	@echo '[!] make fclean: clean all files'
 
 .PHONY: re
 re: fclean all
 
 .PHONY: bonus
-bonus: $(BONUS_NAME)
-
-$(BONUS_NAME): $(OBJECTS) $(BONUS_OBJECTS)
-	@$(AR) rcs $(BONUS_NAME) $^
+bonus: 
+	@make OBJECTS:="$(OBJECTS) $(BONUS_OBJECTS)" all
 
 .PHONY: test
-test: $(NAME)
+test: all
+	@echo '[!] make test: wait for testing'
 	@$(CC) $(CFLAGS) -g -L$(LDDIR) $(LDFLAGS) -I$(INCLUDE_DIR) -o $(TEST) $(MAIN) $(CATCH_SRC)
 	@./test
+	@echo '[!] make test: done'
 
 .PHONY: test_bonus
-test_bonus: $(BONUS_NAME)
-	@clang -L$(LDDIR) -g $(LDFLAGS_BONUS) -I$(INCLUDE_DIR) -o $(TEST) $(MAIN_BONUS)
+test_bonus: bonus
+	@echo '[!] make test_bonus: wait for testing'
+	@$(CC) $(CFLAGS) -g -L$(LDDIR) $(LDFLAGS) -I$(INCLUDE_DIR) -o $(TEST) $(MAIN_BONUS) $(CATCH_SRC)
 	@./test
+	@echo '[!] make test_bonus: done'
 

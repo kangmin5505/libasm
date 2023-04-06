@@ -7,6 +7,7 @@ TEST_CASE( "[ft_strlen]", "[Mandatory]") {
     REQUIRE( ft_strlen("Hello world!") == strlen("Hello world!") );
     REQUIRE( ft_strlen("42seoul") == strlen("42seoul") );
     REQUIRE( ft_strlen("kangkim libasm") == strlen("kangkim libasm") );
+    REQUIRE( ft_strlen("kangkim\0 libasm") == strlen("kangkim\0 libasm") );
 }
 
 TEST_CASE( "[ft_strcpy]", "[Mandatory]") {

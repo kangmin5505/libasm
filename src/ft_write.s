@@ -8,12 +8,12 @@ _ft_write:
 
     mov     rax, 0x2000004   
     syscall
-    jc      .sys_error
+    jc      .return_error
 
     pop     rbp
     ret
 
-.sys_error:
+.return_error:
     mov     rdx, rax
     call    ___error
     mov     [rax], rdx

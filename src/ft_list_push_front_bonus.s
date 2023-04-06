@@ -23,9 +23,6 @@ endstruc
 global  _ft_list_push_front
 extern  _malloc
 
-section .data
-    format db "struct size is : %d", 10, 0
-
 section .text
 _ft_list_push_front:
     push    rbp
@@ -37,19 +34,17 @@ _ft_list_push_front:
     call    _malloc
     mov     rdx, rax    ;   *new_list
 
-    cmp     rdx, 0x00
-    je      .exit
-
     pop     rsi
     pop     rdi
 
-    mov     [rdx], rsi
+    cmp     rdx, 0x00
+    je      .return
+
+    mov     [rdx], rsi      ;   new_list->data = data
     mov     r8, [rdi]
-    mov     [rdx + 8], r8
-    mov     [rdi], rdx
+    mov     [rdx + 8], r8   ;   new_list->next = *begin_list
+    mov     [rdi], rdx      ;   *begin_list = new_list
 
-.exit :
-
-
+.return :
     pop     rbp
     ret

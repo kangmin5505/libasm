@@ -8,12 +8,12 @@ _ft_read:
 
     mov     rax, 0x2000003   
     syscall
-    jc      .error
+    jc      .return_error
 
     pop     rbp
     ret
 
-.error:
+.return_error:
     mov     rdx, rax
     call    ___error
     mov     [rax], rdx
