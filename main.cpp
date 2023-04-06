@@ -52,9 +52,13 @@ TEST_CASE( "[ft_write]", "[Mandatory]") {
 
 TEST_CASE( "[ft_read]", "[Mandatory]") {
     char arr[50];
+    ft_read(-1, arr, 50);
+    int ft_errno = errno;
+    read(-1, arr, 50);
+    int orig_errno = errno;
+    REQUIRE( ft_errno == orig_errno );
     int fd1 = open("text.txt", O_RDONLY);
     int fd2 = open("text.txt", O_RDONLY);
-    REQUIRE( ft_read(-1, arr, 50) == read(-1, arr, 50) );
     REQUIRE( ft_read(fd1, arr, 50) == read(fd2, arr, 50) );
     close(fd1);
     close(fd2);
